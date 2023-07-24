@@ -1,117 +1,111 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 
 using namespace std;
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef long double ld;
-typedef pair<int, int> p;
-typedef vector<vector<int> > vt;
-typedef vector<pair<int, int> > vp;
-const ll mod = 1e9 + 7;
-const int oo = 1e6 + 7;
-
-#define f first
-#define s second
-#define pb push_back
-#define ep emplace_back
-#define sz(a) (int) a.size()
-#define ms(s, n) memset(s, n, sizeof(s))
-#define present(t, x) (t.find(x) != t.end())
-#define all(a) (a.begin(), a.end())
-#define For(i, l, r) for (int i = l; i <= r; i++)
-#define Fod(i, r, l) for (int i = r; i >= l; i--)
-#define fillchar(a, x) memset(a, x, sizeof (a))
-#define faster ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-
-void FileIO() {
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
-}
-
-const int N = 1e5 + 5;
 struct Node {
-	ll lazy;
-	ll val;
-} nodes[N * 4];
+    long long sum;
+    long long lazy;
 
-void down(int id) {
-	ll t = nodes[id].lazy;
-	nodes[id * 2].lazy += t;
-	nodes[id * 2].val += t;
-
-	nodes[id * 2 + 1].lazy += t;
-	nodes[id * 2 + 1].val += t;
-
-	nodes[id].lazy = 0;
-}
-
-void build(int id, int l, int r, int i, ll val){
-	if (i < l || r < i) {
-        return ;
+    Node() {
+        sum = 0;
+        lazy = 0;
     }
-    if (l == r) {
-        nodes[id].val = val;
-        // nodes[id].lazy = val;
+};
+
+void buildSegmentTree(vector<int>& arr, vector<Node>& tree, int node, int start, int end) {
+    if (start == end) {
+        tree[node].sum = arr[start];
         return;
     }
 
-    int m = (l + r) >> 1;
-    build(id * 2, l, m, i, val);
-    build(id * 2 + 1, m + 1, r, i, val);
+    int mid = (start + end) >> 1;
+    buildSegmentTree(arr, tree, 2 * node + 1, start, mid);
+    buildSegmentTree(arr, tree, 2 * node + 2, mid + 1, end);
 
-	nodes[id].val = (nodes[id * 2].val + nodes[id * 2 + 1].val);
+    tree[node].sum = tree[2 * node + 1].sum + tree[2 * node + 2].sum;
 }
+void updateRange(vector<Node>& tree, int node, int start, int end, int l, int r, long long val) {
+    if (tree[node].lazy != 0) {
+        tree[node].sum += (end - start + 1) * tree[node].lazy;
 
-void update(int id, int l, int r, int u, int v, int val) {
-	if (v < l || r < u) {
-		return ;
-	}
-	if (u <= l && r <= v) {
-		nodes[id].val += val;
-		nodes[id].lazy += val;
-		return ;
-	}
-	int mid = (l + r) >> 1;
-	down(id);
+        if (start != end) {
+            tree[2 * node + 1].lazy += tree[node].lazy;
+            tree[2 * node + 2].lazy += tree[node].lazy;
+        }
 
-	update(id * 2, l, mid, u, v, val);
-	update(id * 2 + 1, mid + 1, r, u, v, val);
+        tree[node].lazy = 0;
+    }
 
-	nodes[id].val = (nodes[id * 2].val + nodes[id * 2 + 1].val);
+    if (start > r || end < l) {
+        return;
+    }
+
+    if (start >= l && end <= r) {
+        tree[node].sum += (end - start + 1) * val;
+
+        if (start != end) {
+            tree[2 * node + 1].lazy += val;
+            tree[2 * node + 2].lazy += val;
+        }
+
+        return;
+    }
+
+    int mid = (start + end) >> 1;
+    updateRange(tree, 2 * node + 1, start, mid, l, r, val);
+    updateRange(tree, 2 * node + 2, mid + 1, end, l, r, val);
+
+    tree[node].sum = tree[2 * node + 1].sum + tree[2 * node + 2].sum;
 }
+long long queryRange(vector<Node>& tree, int node, int start, int end, int l, int r) {
+    if (tree[node].lazy != 0) {
+        tree[node].sum += (end - start + 1) * tree[node].lazy;
 
-ll get(int id, int l, int r, int u, int v) {
-	if (v < l || r < u) {
-		return -oo;
-	}
-	if (u <= l && r <= v) {
-		return nodes[id].val;
-	}
-	int mid = (l + r) >> 1;
-	down(id);
+        if (start != end) {
+            tree[2 * node + 1].lazy += tree[node].lazy;
+            tree[2 * node + 2].lazy += tree[node].lazy;
+        }
 
-	return get(id * 2, l, mid, u, v) + get(id * 2 + 1, mid + 1, r, u, v);
+        tree[node].lazy = 0;
+    }
+
+    if (start > r || end < l) {
+        return 0;
+    }
+
+    if (start >= l && end <= r) {
+        return tree[node].sum;
+    }
+
+    int mid = (start + end) >> 1;
+    long long leftSum = queryRange(tree, 2 * node + 1, start, mid, l, r);
+    long long rightSum = queryRange(tree, 2 * node + 2, mid + 1, end, l, r);
+
+    return leftSum + rightSum;
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
-	cout.tie(NULL);
-
-	int n, q; cin >> n >> q;
-	for (int i = 1; i <= n; ++i) {
-		ll val; cin >> val;
-		build(1, 1, n, i, val);
+    int n, q; cin >> n >> q;
+    vector<int> arr;
+    vector<Node> tree(4 * n);
+    for(int i = 1; i <= n; ++i){
+    	int x; cin >> x;
+    	arr.push_back(x);
 	}
-	while (q--) {
+	buildSegmentTree(arr, tree, 0, 0, n - 1);
+	while(q--){
 		int type, u, v;
 		cin >> type >> u >> v;
-		if (type == 2) {
-			ll val; cin >> val;
-			update(1, 1, n, u, v, val);
+		u--;
+		v--;
+		if(type == 2){
+			int val; cin >> val;
+			updateRange(tree, 0, 0, n - 1, u, v, val);
+		}else{
+			cout << queryRange(tree, 0, 0, n - 1, u, v) << endl;
 		}
-		else cout << get(1, 1, n, u, v) << endl;
 	}
-	return 0;
+
+    return 0;
 }
