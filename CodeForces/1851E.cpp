@@ -38,18 +38,18 @@ int main(int argc, char const *argv[]) {
 	while (t--) {
 		int n, k; cin >> n >> k;
 		ll c[n], p[k];
-		for (auto &x: c) cin >> x;
-		for (auto &x: p) cin >> x, c[--x] = 0;
+		for (auto &x : c) cin >> x;
+		for (auto &x : p) cin >> x, c[--x] = 0;
 
 		vector<ll> min_cost(n, 2 * mod);
 		vector<vector<int> > in_mix(n);
 		vector<map<int, ll> > min_list(n);
 
-		for(int i = 0; i < n; ++i){
+		for (int i = 0; i < n; ++i) {
 			int m; cin >> m;
 			if (m == 0) continue;
 			ll sum = 0;
-			for(int j = 0; j < m; ++j){
+			for (int j = 0; j < m; ++j) {
 				int e; cin >> e;
 				e --;
 				in_mix[e].push_back(i);
@@ -60,28 +60,28 @@ int main(int argc, char const *argv[]) {
 		}
 
 		priority_queue<pair<ll, int>, vector<pair<ll, int> >, greater<pair<ll, int> > > pq;
-		for(int i = 0; i < n; ++i){
+		for (int i = 0; i < n; ++i) {
 			pq.emplace(c[i], i);
 			pq.emplace(min_cost[i], i);
 		}
-		while(pq.size()){
+		while (pq.size()) {
 			pair<ll, int> top = pq.top(); pq.pop();
-			if(top.first != c[top.second]) continue;
+			if (top.first != c[top.second]) continue;
 			int e = top.second;
 
-			for(int x: in_mix[e]){
+			for (int x : in_mix[e]) {
 				ll bef = min_list[x][e];
 				min_list[x][e] = c[e];
 				min_cost[x] += c[e] - bef;
 
-				if(min_cost[x] < c[x]){
+				if (min_cost[x] < c[x]) {
 					c[x] = min_cost[x];
 					pq.emplace(c[x], x);
 				}
 			}
 		}
-		for(auto x: c) cout << x << " ";
+		for (auto x : c) cout << x << " ";
 		cout << endl;
 	}
 	return 0;
-} 
+}
