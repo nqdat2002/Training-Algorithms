@@ -6,36 +6,40 @@ typedef vector<pair<int, int> > vpii;
 
 vpii adjList[4000];
 int colour[4000], bad = 0;
-int doDFS(int u, int c) {
+
+int dfs(int u, int c) {
     if (colour[u] != -1) {
         if (colour[u] != c) bad = 1;
         return 0;
     }
     colour[u] = c;
-    for (auto [v, e] : adjList[u]) doDFS(v, c ^ e);
+    for (pair<int, int> p: adjList[u]) dfs(p.first, c ^ p.second);
     return 0;
 }
+
 int main() {
-    int i;
-    int t, n, m, k;
-    int x1, y1, x2, y2;
-    scanf("%d", &t);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int t; cin >> t;
     while (t--) {
-        scanf("%d %d %d", &n, &m, &k);
-        for (i = 0; i < k; i++) {
-            scanf("%d %d %d %d", &x1, &y1, &x2, &y2);
+        int n, m, k; cin >> n >> m >> k;
+        for (auto &x: adjList) x.clear();
+
+        for (int i = 0; i < k; i++) {
+            int x1, y1, x2, y2;
+            cin >> x1 >> y1 >> x2 >> y2;
             x1--, y1--, x2--, y2--;
-            adjList[min(x1, x2)].pb(mp(n + min(y1, y2), (x1 + y1 != x2 + y2)));
-            adjList[n + min(y1, y2)].pb(mp(min(x1, x2), (x1 + y1 != x2 + y2)));
+            adjList[min(x1, x2)].push_back({n + min(y1, y2), (x1 + y1 != x2 + y2)});
+            adjList[n + min(y1, y2)].push_back({min(x1, x2), (x1 + y1 != x2 + y2)});
         }
-
+        bad = 0;
         fill(colour, colour + n + m, -1), bad = 0;
-        for (i = 0; i < n + m; i++) {
-            if (colour[i] == -1) doDFS(i, 0);
+        for (int i = 0; i < n + m; i++) {
+            if (colour[i] == -1) dfs(i, 0);
         }
-        printf(bad ? "NO\n" : "YES\n");
-
-        for (i = 0; i < n + m; i++) adjList[i].clear();
+        cout << (bad ? "NO" : "YES") << endl;
     }
     return 0;
 }
