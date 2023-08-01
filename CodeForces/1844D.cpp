@@ -8,9 +8,9 @@ int main() {
         int n; cin >> n;
         int c = 1;
         while ((n % c) == 0) c++;
-        for (int i = 0; i < n; i++) s[i] = 'a'+(i % c);
+        for (int i = 0; i < n; i++) s[i] = 'a' + (i % c);
         s[n] = '\0';
-        printf("%s\n",s);
+        printf("%s\n", s);
     }
     return 0;
 }
