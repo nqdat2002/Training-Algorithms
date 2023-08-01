@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef vector<pair<int, int> > vpii;
 
-vpii adjList[4000];
+vector<pair<int, int> >  adjList[4000];
 int colour[4000], bad = 0;
 
 int dfs(int u, int c) {
