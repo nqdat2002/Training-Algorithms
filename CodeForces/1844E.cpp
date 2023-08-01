@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef vector<pair<int, int> > vpii;
-#define mp make_pair
-#define pb push_back
 
 vpii adjList[4000];
 int colour[4000], bad = 0;
