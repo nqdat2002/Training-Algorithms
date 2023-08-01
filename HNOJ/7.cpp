@@ -40,6 +40,7 @@ int main(int argc, char const *argv[]) {
 	for (int i = 1; i <= n; i++) cin >> a[i];
 	int m = 0;
 	f[0] = 0;
+
 	for (int i = 1; i <= n; i++) {
 		int k = lower_bound(b + 1, b + m + 1, a[i]) - b;
 		if(f[i] + a[i] <= W){
