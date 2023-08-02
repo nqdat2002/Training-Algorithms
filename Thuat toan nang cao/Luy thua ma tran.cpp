@@ -43,8 +43,9 @@ matrix operator * (matrix a, matrix b){
 		for(int j = 0; j < n; j ++){
 			c.x[i][j] = 0;
 			for(int k = 0; k < n; k ++){
-				c.x[i][j] = (c.x[i][j] + (a.x[i][k] * b.x[k][j]) % mod) % mod;
-				c.x[i][j] %= mod;
+				// c.x[i][j] = (c.x[i][j] + (a.x[i][k] * b.x[k][j]) % mod) % mod;
+				// c.x[i][j] %= mod;
+				c.x[i][j] = (c.x[i][j] + (a.x[i][k] * b.x[k][j]));
 			}
 		}
 	}
