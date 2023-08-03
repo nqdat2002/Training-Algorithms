@@ -13,7 +13,6 @@ bool checkMaxtrix(char a[][3], char c){
         || (a[0][0] == a[1][1] && a[1][1] == a[2][2] && a[0][0] == c) 
         || (a[0][2] == a[1][1] && a[1][1] == a[2][0] && a[0][2] == c);
 }
-
 string check(char a[][3]){
     if(checkMaxtrix(a, 'X')) return "X";
     if(checkMaxtrix(a, 'O')) return "O";

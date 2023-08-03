@@ -40,6 +40,7 @@ int main(int argc, char const *argv[]) {
 		cin >> n >> m >> h;
 		pair<int, long long> rud;
 		int ans = 1;
+		
 		for (int i = 0; i < n; i++) {
 			vector<int> cur(m);
 			for (int j = 0; j < m; j++) {

@@ -16,7 +16,6 @@ int main() {
         int res = 0;
         for(auto x: v) if (x.first > x.second) res ++;
         cout << res << endl;
-
     }
     return 0;
 }
