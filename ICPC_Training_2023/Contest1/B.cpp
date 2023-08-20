@@ -28,53 +28,55 @@ void FileIO() {
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 }
-struct cmp {
-	bool operator()(pair<ll, ll> a, pair<ll, ll> b) {
-		if (a.second != b.second)
-			return a.second < b.second;
-		return a.first < b.first;
-	}
-};
-ll count(ll x) {
-	ll cnt2 = 0, cnt5 = 0;
-	while (x % 2 == 0 && x) {
-		x /= 2;
-		cnt2 += 1;
-	}
-	while (x % 5 == 0 && x) {
-		x /= 5;
-		cnt5 += 1;
-	}
-	ll res = 0;
-	while (cnt2 > 0 && cnt5 > 0) {
-		res ++;
-		cnt2 -= 1;
-		cnt5 -= 1;
-	}
-	return res;
+
+/* */
+template <class T>
+bool minimize(T &a, const T &b) {
+	if (a > b) {a = b; return 1;}
+	return 0;
 }
+
+template <class T>
+bool maximize(T &a, const T &b) {
+	if (a < b) {a = b; return 1;}
+	return 0;
+}
+
+const int N = 200 + 7, M = 25;
+
+int n, k, pw2[N], pw5[N];
+int _dp[N][N * M];
+
 int main(int argc, char const *argv[]) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	cout.tie(NULL);
-
-	int t = 1;
-	while (t--) {
-		ll n, k; cin >> n >> k;
-		ll a[n];
-		for (auto &x : a) cin >> x;
-		priority_queue<pair<ll, ll>, vector<pair<ll, ll >>, cmp> q;
-		for (auto x : a) q.push({x, count(x)});
-		while (q.size()) {
-			if (q.top().second) {
-				q.pop();
-				cnt += q.top().second;
-				k--;
-			}
-		}
-		while(k > 0){
-			
+	
+	cin >> n >> k;
+	for (int i = 1; i <= n; i++) {
+		ll v; cin >> v;
+		while (v % 2 == 0) v /= 2, pw2[i]++;
+		while (v % 5 == 0) v /= 5, pw5[i]++;
+	}
+	for (int i = 0; i <= k; i++) {
+		for (int j = 0; j <= n * M; j++) {
+			_dp[i][j] = -oo;
 		}
 	}
+	_dp[0][0] = 0;
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = k; j > 0; j--) {
+			for (int v = pw5[i]; v <= i * M; v++) {
+				maximize(_dp[j][v], _dp[j - 1][v - pw5[i]] + pw2[i]);
+			}
+		}
+	}
+
+	int ans = 0;
+	for (int i = 1; i <= n * M; i++) {
+		maximize(ans, min(i, _dp[k][i]));
+	}
+	cout << ans << "\n";
 	return 0;
 }
