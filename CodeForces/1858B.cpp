@@ -31,8 +31,13 @@ void FileIO() {
 #endif
 }
 
-int dp(int x, int y, int d) {
-	return (y - x) / d + 1 - ((y - x) % d) == 0;
+int dp(int d, vector<int> x){
+	int res = 0;
+	for (int i = 1; i < x.size(); i++){
+		res += (x[i] - x[i - 1] - 1) / d;
+	}
+	res += int(x.size()) - 2;
+	return res;
 }
 
 int main(int argc, char const *argv[]) {
@@ -42,33 +47,25 @@ int main(int argc, char const *argv[]) {
 
 	int t; cin >> t;
 	while (t--) {
-		int n, m, d; cin >> n >> m >> d;
+		int n, m, d;
+		cin >> n >> m >> d;
 		vector<int> v(m);
 		for(auto &x: v) cin >> x;
-		int st = 0;
-		if (v[0] != 1) {
-			st = 1;
-			v.insert(v.begin(), 1);
-		}
+		v.insert(v.begin(), 1 - d);
 		v.push_back(n + 1);
-		n = v.size();
-		int ans = 0;
-		for (int i = 1; i < n; i++) ans += dp(v[i - 1], v[i], d);
-		int anstmp = ans, res = ans;
-		for (int i = 1; i < n - 1; i++) {
-			int cur = dp(v[i - 1], v[i + 1], d) - dp(v[i - 1], v[i], d) - dp(v[i], v[i + 1], d);
-			res = anstmp + cur;
-			ans = min(ans, res);
+		int ans = 2e9;
+		vector<int> res;
+		for (int i = 1; i <= m; i++){
+			int A = v[i] - v[i - 1] - 1, B = v[i + 1] - v[i] - 1, C = v[i + 1] - v[i - 1] - 1;
+			int D = C / d - (A / d + B / d);
+			if (D < ans){
+				ans = D;
+				res.clear();
+			}
+			if (D == ans) res.push_back(v[i]);
+			
 		}
-		int count = 0;
-		for (int i = 1; i < n - 1; i++) {
-			int cur = dp(v[i - 1], v[i + 1], d) - dp(v[i - 1], v[i], d) - dp(v[i], v[i + 1], d);
-			res = anstmp + cur;
-			if (res == ans) 
-				count++;
-		}
-		cout << ans << " " << count << endl;
+		cout << ans + dp(d, v) - 1 << ' ' << res.size() << endl;
 	}
 	return 0;
 }
-
