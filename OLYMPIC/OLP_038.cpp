@@ -29,14 +29,22 @@ bool cmp(data u, data v) {
 	return (u.k > v.k or (u.k == v.k and u.type > v.type));
 }
 
-void update(int x) {
-	for (x; x <= n; x += x & (-x)) bit[x]++;
+void update(int u, int v) {
+	int id = u;
+	while (id <= n) {
+		bit[id] += v;
+		id += (id & (-id));
+	}
 }
 
-int get(int x) {
-	int ans = 0;
-	for (x; x > 0; x -= x & (-x)) ans += bit[x];
-	return ans;
+ll get(int u) {
+	int id = u;
+	ll res = 0;
+	while (id > 0) {
+		res += bit[id];
+		id -= (id & (-id));
+	}
+	return res;
 }
 
 int main() {
@@ -51,7 +59,7 @@ int main() {
 		a[i].type = -1;
 	}
 	cin >> q;
-	FOR (x, 1, q) {
+	for (int x = 1; x <= q; ++x) {
 		cin >> a[x + n].i >> a[x + n].j >> a[x + n].k;
 		a[x + n].id = x;
 	}
@@ -60,11 +68,12 @@ int main() {
 
 	for (int i = 1; i <= n + q; i ++)
 		if (a[i].type == -1)
-			update(a[i].i);
+			update(a[i].i, 1);
 		else
 			res[a[i].id] = get(a[i].j) - get(a[i].i - 1);
 
-	for (int i = 1; i <= q; i++) cout << res[i] << endl;
+	for (int i = 1; i <= q; i++)
+		cout << res[i] << endl;
 
 	return 0;
 }
