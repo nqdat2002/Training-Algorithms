@@ -40,31 +40,43 @@ vector<vector<bool> > visit(maxN, vector<bool>(maxN, false));
 vector <int> slicks;
 int moveX[] = {0, 0, 1, -1};
 int moveY[] = {1, -1, 0, 0};
-
-void bfs(int sx, int sy) {
-    int sizeSlicks = 1;
+int prev_x = 0, prev_y = 0;
+bool bfs(int x, int y) {
     queue < pair <int, int> > q;
-    q.push({sx, sy});
-    visit[sx][sy] = true;
+    q.push({x, y});
+    //visit[x][y] = true;
     while (!q.empty()) {
         int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
+        int y = q.front().second; q.pop();
+        visit[x][y] = true;
 
         for (int i = 0; i < 4; ++i) {
             int u = x + moveX[i];
             int v = y + moveY[i];
-
-            if (u > n || u < 1) continue;
-            if (v > n || v < 1) continue;
-            if (a[u][v] == '1') continue; 
-
-            if (a[u][v] == '0' && !visit[u][v]) {
-                ++sizeSlicks;
-                visit[u][v] = true;
-                q.push({u, v});
+            if (u > n || u < 1 || v > n || v < 1 || (u == prev_x && v == prev_y) || a[u][v] == '1') continue;
+            if (visit[u][v]) {
+                return true;
             }
+            q.push({u, v});
+            prev_x = x;
+            prev_y = y;
         }
+    }
+    return false;
+}
+bool ok = false;
+void dfs(int x, int y, int xx, int yy) {
+    if (ok) return;
+    visit[x][y] = true;
+    for (int i = 0; i < 4; ++i) {
+        int u = x + moveX[i];
+        int v = y + moveY[i];
+        if (u > n || u < 1 || v > n || v < 1 || (u == xx && v == yy) || a[u][v] == '1') continue;
+        if (visit[u][v]) {
+            ok = true;
+            return;
+        }
+        dfs(u, v, x, y);
     }
 }
 
@@ -74,21 +86,13 @@ int main(int argc, char const *argv[]) {
     cout.tie(NULL);
 
     cin >> n;
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= n; ++j)
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= n; ++j) {
             cin >> a[i][j];
-    for (int i = 1; i <= n; ++i)
-        for (int j = 1; j <= n; ++j)
-            if (a[i][j] == '0' && !visit[i][j])
-                bfs(i, j);
-    for (int i = 1; i <= n; ++i){
-        for(int j = 1; j <= n; ++j){
-            if(a[i][j] == '0' && !visit[i][j]){
-                cout << "No" << endl;
-                return 0;
-            }
+            if (a[i][j] == '0') prev_x = i, prev_y = j;
         }
     }
-    cout << "Yes" << endl;
+    if (bfs(prev_x, prev_y)) cout << "Yes";
+    else cout << "No";
     return 0;
 }
