@@ -30,41 +30,34 @@ void FileIO() {
 	freopen("output.txt", "w", stdout);
 #endif
 }
-vector<ll> factorial;
-vector<ll> fsum;
-map<ll, int> mp;
 
-void calcFx(ll x, int m) {
-	factorial.push_back(0);
-	factorial.push_back(2);
-	ll sum = 2;
-	ll factor = 1;
-	for (ll i = 2; i <= x; ++i) {
-		factor *= i;
-		sum += (i * factor % m + i % m);
-		sum %= m;
-		factorial.push_back(sum);
+vector<ll> fact;
+
+void init(int n, int m){
+	ll sumfact = 2, x = n;
+	fact.push_back(0 % m);
+	fact.push_back(2 % m);
+	ll ff = 1;
+	for (int i = 2; i <= n; ++i){
+		ff *= i;
+		sumfact += (i * (ff + x));
+		sumfact %= m;
+		fact.push_back(sumfact);
 	}
-	for(auto x: factorial) cout << x << endl;
 }
 
 int main(int argc, char const *argv[]) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	cout.tie(NULL);
-
+	FileIO();
 	int n, m; cin >> n >> m;
 	ll a[n];
-	calcFx(1000, m);
-	// for (auto &x : a) cin >> x;
-
-	// ll sum = 0;
-	// for (auto x : a) {
-	// 	if (mp[x]) {
-	// 		sum += factorial[x] % m;
-	// 		sum %= m;
-	// 	}
-	// }
-	// cout << sum << endl;
+	ll mx = LONG_LONG_MIN;
+	for (auto &x: a) cin >> x, x %= m, mx = max(mx, x);
+	init(mx, m);
+	
+	// for (auto x: fact) cout << x << endl;
+	cout << fact[mx] << endl;
 	return 0;
 }
