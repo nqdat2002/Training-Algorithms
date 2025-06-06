@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define run1 int t; cin >> t;
-#define run2 int t; cin >> t; cin.ignore();
+
 char a[1000][1000];
-void Solve(){
+
+int main(){
 	int m, n, cnt = 0;
 	cin >> m >> n;
 	for(int i = 0; i < m; i ++)
@@ -17,9 +17,5 @@ void Solve(){
 		}
 	}
 	cout << cnt << endl;
-}
-int main(){
-	Solve();
-	return 0;
 }
 

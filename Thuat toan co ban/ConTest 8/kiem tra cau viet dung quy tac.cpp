@@ -1,9 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-void FileIO(){
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
-}
 void Solve(string s){
 	stack<int> stk;
 	int n = s.size();
@@ -28,7 +24,6 @@ void Solve(string s){
 	else cout << "NO";
 }
 int main(){
-	FileIO();
 	int t; cin >> t; 
 	cin.ignore();
 	while(t--){
