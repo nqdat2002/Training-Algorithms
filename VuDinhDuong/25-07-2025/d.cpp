@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-int n, m, c[100], cnt;
-bool vs[100];
+int n, m, c[20], cnt;
+bool vs[20];
 void Try(int i) {
 	for (int j = 1; j <= n; j++) {
 		if (!vs[j]) {
